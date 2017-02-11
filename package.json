@@ -2,7 +2,7 @@
   "name": "wtfjht-alexa",
   "version": "0.0.1",
   "description": "An Alexa skill for the tongue-in-cheek news site What the Fuck Just Happened Today?",
-  "main": "app.js",
+  "main": "index.js",
   "dependencies": {
     "feedr": "2.13.3",
     "cheerio": "0.22.0"
