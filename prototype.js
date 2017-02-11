@@ -16,6 +16,36 @@
 
 const Alexa = require('alexa-sdk');
 const APP_ID = undefined;  // TODO replace with your app ID (OPTIONAL).
+const NewsFeedURL = "https://whatthefuckjusthappenedtoday.com/atom.xml";
+var https = require('https');
+
+/** 
+ * Pull the ATOM news feed in
+ * TODO: Does LAMBDA support caching? This response won't change often.
+ */
+function getNewestData(callback) {
+    return https.get(NewsFeedURL, function(response) {
+        // Continuously update stream with data
+        var rawAtomData = '';
+        response.on('data', function(d) {
+            rawAtomData += d;
+        });
+        response.on('end', function() {
+            // Data reception is done, parse out the latest day from ATOM feed
+            var parsedAtomDay = getLatestDayFromAtom(rawAtomData);
+            // Extract the meaningful parts from that day to tell the user
+            var toSpeak = getSpokenDataForDay(parsedAtomDay);
+            callback(parsedAtomDay);
+        });
+    });
+}
+
+/**
+ * Given a raw string of an ATOM feed, return the first <entry>.
+ */
+function getLatestDayFromAtom(rawAtomData) {
+    return "";
+}
 
 var languageStrings = {
     'en-US': {
