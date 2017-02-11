@@ -19,16 +19,21 @@ const cheerio = require('cheerio');
 
 const NewsFeedURL = "https://whatthefuckjusthappenedtoday.com/atom.xml";
 
-// Read the ATOM feed.
-feedr.readFeed(NewsFeedURL, {}, function (err, data, headers) {
+// Read the ATOM feed and get the most recent day.
+// Call callback function with formatted text string when completed.
+// TODO: Cache news feed somewhere.
+function getTodaysNews(callback) {
+  feedr.readFeed(NewsFeedURL, {}, function (err, data, headers) {
     var entries = data.feed.entry;
+    // TODO: support different days. For now, most recent one only.
     var rawMostRecentDay = entries[0].content[0]._;
-    //console.log(rawMostRecentDay);
     var formatted = formatDay(rawMostRecentDay);
-    console.log(formatted.text());
-});
+    callback(formatted);
+  });
+}
 
 /**
+ * Helper function for formatting the ATOM data for a given day.
  * data is HTML from the ATOM feed, representing one day's news.
  * This is extremely brittle, but we don't have a more reliable data source.
  * Careful editing, or even re-ordering these lines.
@@ -53,6 +58,67 @@ function formatDay(data) {
       $(this).text($(this).text().replace('()', ''));
   });
 
-  return $;
+  return $.text();
 }
 
+// TODO: Put the other languages back for help text and the like.
+var languageStrings = {
+    'en-US': {
+        translation: {
+            SKILL_NAME: 'What The F Just Happened Today?',
+            GET_FACT_MESSAGE: "Here's what happened: ",
+            HELP_MESSAGE: 'You can say today, or, you can say exit... What can I help you with?',
+            HELP_REPROMPT: 'What can I help you with?',
+            STOP_MESSAGE: 'Goodbye!',
+        },
+    },
+};
+
+const handlers = {
+    'LaunchRequest': function () {
+        this.emit('GetNews');
+    },
+    'GetNewsIntent': function () {
+        this.emit('GetNews');
+    },
+    'GetNews': function () {
+        // Use this.t() to get corresponding language data
+        getTodaysNews(function(formattedNews) {
+          // Create speech output
+          // TODO: internationalize.
+          this.emit(':tellWithCard', formattedNews, this.t('SKILL_NAME'), formattedNews);
+        });
+
+        // Create speech output
+        // TODO: internationalize.
+        this.emit(':tell', "Please wait while I find what happened today");
+    },
+    'AMAZON.HelpIntent': function () {
+        const speechOutput = this.t('HELP_MESSAGE');
+        const reprompt = this.t('HELP_MESSAGE');
+        this.emit(':ask', speechOutput, reprompt);
+    },
+    'AMAZON.CancelIntent': function () {
+        this.emit(':tell', this.t('STOP_MESSAGE'));
+    },
+    'AMAZON.StopIntent': function () {
+        this.emit(':tell', this.t('STOP_MESSAGE'));
+    },
+    'SessionEndedRequest': function () {
+        this.emit(':tell', this.t('STOP_MESSAGE'));
+    },
+};
+
+exports.handler = (event, context) => {
+    const alexa = Alexa.handler(event, context);
+    alexa.APP_ID = APP_ID;
+    // To enable string internationalization (i18n) features, set a resources object.
+    alexa.resources = languageStrings;
+    alexa.registerHandlers(handlers);
+    alexa.execute();
+};
+
+// For testing locally.
+//getTodaysNews(function(news) {
+//  console.log(news);
+//});
