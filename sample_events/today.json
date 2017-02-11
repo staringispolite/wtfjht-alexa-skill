@@ -1,0 +1,24 @@
+{
+  "session": {
+    "sessionId": "SessionId.288e1736-c74e-41c2-a977-f0a78c55f5e5",
+    "application": {
+      "applicationId": "amzn1.ask.skill.fbc4d6be-0043-42d0-baad-035edc07d69a"
+    },
+    "attributes": {},
+    "user": {
+      "userId": "amzn1.ask.account.AELG36EURGGPWV3DCH6FWLPWZW3BAJJWXNGLIODDNYCR64ACPHGZGZX7I7MTSV5ESJ5MIBDRAJZA2ACAPKEXMXJDNEIMOTNP5ZGNJ5SU5HJODKJNRM5BDZRIMOQJS7HF7U2XAL3XXFO443RLUYOJJSDARQOYRXRNON7FX6JH77MLK3GJAT5QNTVHZV35ZUNUO7UNZX5AMEFBHDY"
+    },
+    "new": true
+  },
+  "request": {
+    "type": "IntentRequest",
+    "requestId": "EdwRequestId.7b84cbcc-b3f3-4ac4-a383-307ca27a2583",
+    "locale": "en-US",
+    "timestamp": "2017-02-11T02:08:46Z",
+    "intent": {
+      "name": "GetNewsIntent",
+      "slots": {}
+    }
+  },
+  "version": "1.0"
+}

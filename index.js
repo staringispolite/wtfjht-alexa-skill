@@ -14,14 +14,16 @@
 
 'use strict';
 
-const feedr = require('feedr').create();
-const cheerio = require('cheerio');
+var Alexa = require('alexa-sdk');
+//const feedr = require('feedr').create();
+//const cheerio = require('cheerio');
 
 const NewsFeedURL = "https://whatthefuckjusthappenedtoday.com/atom.xml";
 
 // Read the ATOM feed and get the most recent day.
 // Call callback function with formatted text string when completed.
 // TODO: Cache news feed somewhere.
+/**
 function getTodaysNews(callback) {
   feedr.readFeed(NewsFeedURL, {}, function (err, data, headers) {
     var entries = data.feed.entry;
@@ -31,6 +33,7 @@ function getTodaysNews(callback) {
     callback(formatted);
   });
 }
+*/
 
 /**
  * Helper function for formatting the ATOM data for a given day.
@@ -38,6 +41,7 @@ function getTodaysNews(callback) {
  * This is extremely brittle, but we don't have a more reliable data source.
  * Careful editing, or even re-ordering these lines.
  */
+/**
 function formatDay(data) {
   var $ = cheerio.load(data);
   
@@ -60,6 +64,7 @@ function formatDay(data) {
 
   return $.text();
 }
+*/
 
 // TODO: Put the other languages back for help text and the like.
 var languageStrings = {
@@ -83,11 +88,12 @@ const handlers = {
     },
     'GetNews': function () {
         // Use this.t() to get corresponding language data
-        getTodaysNews(function(formattedNews) {
+        //getTodaysNews(function(formattedNews) {
           // Create speech output
           // TODO: internationalize.
+          var formattedNews = "This is hard coded news";
           this.emit(':tellWithCard', formattedNews, this.t('SKILL_NAME'), formattedNews);
-        });
+        //});
 
         // Create speech output
         // TODO: internationalize.
@@ -111,7 +117,7 @@ const handlers = {
 
 exports.handler = (event, context) => {
     const alexa = Alexa.handler(event, context);
-    alexa.APP_ID = APP_ID;
+    //alexa.APP_ID = APP_ID;
     // To enable string internationalization (i18n) features, set a resources object.
     alexa.resources = languageStrings;
     alexa.registerHandlers(handlers);
