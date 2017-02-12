@@ -4,7 +4,7 @@
   "description": "An Alexa skill for the tongue-in-cheek news site What the Fuck Just Happened Today?",
   "main": "index.js",
   "dependencies": {
-    "feedr": "2.13.3",
-    "cheerio": "0.22.0"
+    "cheerio": "0.22.0",
+    "request": "^2.79.0"
   }
 }

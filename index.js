@@ -15,25 +15,27 @@
 'use strict';
 
 var Alexa = require('alexa-sdk');
-//const feedr = require('feedr').create();
-//const cheerio = require('cheerio');
+const request = require('request');
+const cheerio = require('cheerio');
 
 const NewsFeedURL = "https://whatthefuckjusthappenedtoday.com/atom.xml";
 
 // Read the ATOM feed and get the most recent day.
 // Call callback function with formatted text string when completed.
 // TODO: Cache news feed somewhere.
-/**
 function getTodaysNews(callback) {
-  feedr.readFeed(NewsFeedURL, {}, function (err, data, headers) {
-    var entries = data.feed.entry;
-    // TODO: support different days. For now, most recent one only.
-    var rawMostRecentDay = entries[0].content[0]._;
-    var formatted = formatDay(rawMostRecentDay);
-    callback(formatted);
+  request(NewsFeedURL, function(error, response, body) {
+    if (!error && response.statusCode == 200) {
+      console.log(body);
+      //var entries = data.feed.entry;
+      // TODO: support different days. For now, most recent one only.
+      //var rawMostRecentDay = entries[0].content[0]._;
+      //var formatted = formatDay(rawMostRecentDay);
+      var formatted = body.substring(0,1000);
+      callback(formatted);
+    }
   });
 }
-*/
 
 /**
  * Helper function for formatting the ATOM data for a given day.
@@ -41,7 +43,6 @@ function getTodaysNews(callback) {
  * This is extremely brittle, but we don't have a more reliable data source.
  * Careful editing, or even re-ordering these lines.
  */
-/**
 function formatDay(data) {
   var $ = cheerio.load(data);
   
@@ -64,7 +65,6 @@ function formatDay(data) {
 
   return $.text();
 }
-*/
 
 // TODO: Put the other languages back for help text and the like.
 var languageStrings = {
@@ -87,17 +87,17 @@ const handlers = {
         this.emit('GetNews');
     },
     'GetNews': function () {
+        var alexaHandlerThis = this; // Save context for inside callback.
         // Use this.t() to get corresponding language data
-        //getTodaysNews(function(formattedNews) {
+        getTodaysNews(function(formattedNews) {
           // Create speech output
           // TODO: internationalize.
-          var formattedNews = "This is hard coded news";
-          this.emit(':tellWithCard', formattedNews, this.t('SKILL_NAME'), formattedNews);
-        //});
+          alexaHandlerThis.emit(':tellWithCard', formattedNews, alexaHandlerThis.t('SKILL_NAME'), formattedNews);
+        });
 
         // Create speech output
         // TODO: internationalize.
-        this.emit(':tell', "Please wait while I find what happened today");
+        //this.emit(':tell', "Please wait while I find what happened today");
     },
     'AMAZON.HelpIntent': function () {
         const speechOutput = this.t('HELP_MESSAGE');
@@ -123,8 +123,3 @@ exports.handler = (event, context) => {
     alexa.registerHandlers(handlers);
     alexa.execute();
 };
-
-// For testing locally.
-//getTodaysNews(function(news) {
-//  console.log(news);
-//});
