@@ -80,11 +80,11 @@ function formatDay(data) {
 var languageStrings = {
     'en-US': {
         translation: {
-            SKILL_NAME: 'What The F Just Happened Today?',
-            SPOKEN_NEWS_INTRO: "Here's what happened, from w t f j h t.com: ",
-            SPOKEN_NEWS_OUTRO: " For more daily news roundups, visit w t f j h t.com.",
-            IN_APP_NEWS_INTRO: "Here's what happened, from wtfjht.com: ",
-            IN_APP_NEWS_OUTRO: " For more daily news roundups, visit wtfjht.com.",
+            CARD_DISPLAY_NAME: 'WTF Just Happened Today',
+            SPOKEN_NEWS_INTRO: "Here's what happened, from w t f just happened today.com: ",
+            SPOKEN_NEWS_OUTRO: " For more daily news roundups, visit w t f just happened today.com.",
+            IN_APP_NEWS_INTRO: "Here's what happened, from wtfjusthappenedtoday.com:\n",
+            IN_APP_NEWS_OUTRO: "\nFor more daily news roundups, visit wtfjusthappenedtoday.com.",
             HELP_MESSAGE: 'You can say today, or, you can say exit... What can I help you with?',
             HELP_REPROMPT: 'What can I help you with?',
             STOP_MESSAGE: 'Goodbye!',
@@ -111,7 +111,7 @@ const handlers = {
           // TODO: internationalize.
           alexaHandlerThis.emit(
             ':tellWithCard', speechOutput, 
-            alexaHandlerThis.t('SKILL_NAME'), cardOutput);
+            alexaHandlerThis.t('CARD_DISPLAY_NAME'), cardOutput);
         });
 
         // TODO: If it takes too long to fetch the feed, add something like
