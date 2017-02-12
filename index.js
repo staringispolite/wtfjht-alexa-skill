@@ -26,12 +26,15 @@ const NewsFeedURL = "https://whatthefuckjusthappenedtoday.com/atom.xml";
 function getTodaysNews(callback) {
   request(NewsFeedURL, function(error, response, body) {
     if (!error && response.statusCode == 200) {
-      console.log(body);
-      //var entries = data.feed.entry;
+      var $ = cheerio.load(body, {
+        xmlMode: true
+      });
+
       // TODO: support different days. For now, most recent one only.
-      //var rawMostRecentDay = entries[0].content[0]._;
-      //var formatted = formatDay(rawMostRecentDay);
-      var formatted = body.substring(0,1000);
+      var mostRecentDay = $('entry').first().children('content').html();
+      console.log(mostRecentDay);
+
+      var formatted = formatDay(mostRecentDay);
       callback(formatted);
     }
   });
@@ -39,7 +42,8 @@ function getTodaysNews(callback) {
 
 /**
  * Helper function for formatting the ATOM data for a given day.
- * data is HTML from the ATOM feed, representing one day's news.
+ *
+ * @param data is HTML from the ATOM feed, representing one day's news.
  * This is extremely brittle, but we don't have a more reliable data source.
  * Careful editing, or even re-ordering these lines.
  */
