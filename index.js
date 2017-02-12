@@ -69,7 +69,11 @@ function formatDay(data) {
       $(this).text($(this).text().replace('()', ''));
   });
 
-  return $.text();
+  // Sometimes we end up with more than two blank lines
+  var formatted = $.text().replace(/(\n){3,}/g, '\n\n');
+  console.log('formatted: ' + formatted);
+
+  return formatted;
 }
 
 // TODO: Put the other languages back for help text and the like.
@@ -101,9 +105,9 @@ const handlers = {
         getTodaysNews(function(formattedNews) {
           // Create speech output
           var speechOutput = alexaHandlerThis.t('SPOKEN_NEWS_INTRO') +
-            formattedNews + alexaHandlerThis.t('SPOKEN_NEWS_OUTRO'); 
+            formattedNews + alexaHandlerThis.t('SPOKEN_NEWS_OUTRO');
           var cardOutput = alexaHandlerThis.t('IN_APP_NEWS_INTRO') +
-            formattedNews + alexaHandlerThis.t('IN_APP_NEWS_OUTRO'); 
+            formattedNews + alexaHandlerThis.t('IN_APP_NEWS_OUTRO');
           // TODO: internationalize.
           alexaHandlerThis.emit(
             ':tellWithCard', speechOutput, 
