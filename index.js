@@ -15,8 +15,9 @@
 'use strict';
 
 var Alexa = require('alexa-sdk');
-const request = require('request');
 const cheerio = require('cheerio');
+const htmlencode = require('htmlencode');
+const request = require('request');
 
 const NewsFeedURL = "https://whatthefuckjusthappenedtoday.com/atom.xml";
 
@@ -32,6 +33,7 @@ function getTodaysNews(callback) {
 
       // TODO: support different days. For now, most recent one only.
       var mostRecentDay = $('entry').first().children('content').html();
+      var mostRecentDay = htmlencode.htmlDecode(mostRecentDay);
       console.log(mostRecentDay);
 
       var formatted = formatDay(mostRecentDay);
@@ -75,7 +77,10 @@ var languageStrings = {
     'en-US': {
         translation: {
             SKILL_NAME: 'What The F Just Happened Today?',
-            GET_FACT_MESSAGE: "Here's what happened: ",
+            SPOKEN_NEWS_INTRO: "Here's what happened, from w t f j h t.com: ",
+            SPOKEN_NEWS_OUTRO: " For more daily news roundups, visit w t f j h t.com.",
+            IN_APP_NEWS_INTRO: "Here's what happened, from wtfjht.com: ",
+            IN_APP_NEWS_OUTRO: " For more daily news roundups, visit wtfjht.com.",
             HELP_MESSAGE: 'You can say today, or, you can say exit... What can I help you with?',
             HELP_REPROMPT: 'What can I help you with?',
             STOP_MESSAGE: 'Goodbye!',
@@ -95,12 +100,17 @@ const handlers = {
         // Use this.t() to get corresponding language data
         getTodaysNews(function(formattedNews) {
           // Create speech output
+          var speechOutput = alexaHandlerThis.t('SPOKEN_NEWS_INTRO') +
+            formattedNews + alexaHandlerThis.t('SPOKEN_NEWS_OUTRO'); 
+          var cardOutput = alexaHandlerThis.t('IN_APP_NEWS_INTRO') +
+            formattedNews + alexaHandlerThis.t('IN_APP_NEWS_OUTRO'); 
           // TODO: internationalize.
-          alexaHandlerThis.emit(':tellWithCard', formattedNews, alexaHandlerThis.t('SKILL_NAME'), formattedNews);
+          alexaHandlerThis.emit(
+            ':tellWithCard', speechOutput, 
+            alexaHandlerThis.t('SKILL_NAME'), cardOutput);
         });
 
-        // Create speech output
-        // TODO: internationalize.
+        // TODO: If it takes too long to fetch the feed, add something like
         //this.emit(':tell', "Please wait while I find what happened today");
     },
     'AMAZON.HelpIntent': function () {

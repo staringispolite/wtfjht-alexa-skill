@@ -5,6 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "cheerio": "0.22.0",
+    "htmlencode": "0.0.4",
     "request": "^2.79.0"
   }
 }
